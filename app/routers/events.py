@@ -6,7 +6,7 @@ from app.config import config
 from sqlmodel import Session, select, delete
 
 from typing import List
-from app.models.event import Event, EventCreate
+from app.models.event import Event, EventForm
 from app.data.db import SessionDep
 
 from datetime import datetime
@@ -17,7 +17,7 @@ templates = Jinja2Templates(directory=config.root_dir / "templates")
 
 
 
-# GET - Events
+# GET - events
 @router.get("/", response_model=List[Event])
 async def get_events(session: SessionDep):
     '''
@@ -27,9 +27,9 @@ async def get_events(session: SessionDep):
     return events
 
 
-# POST - Events
+# POST - events
 @router.post("/", response_model=Event)
-async def create_event(session: SessionDep, event: EventCreate):
+async def create_event(session: SessionDep, event: EventForm):
     '''
     Creates a new event.
     '''
@@ -40,14 +40,15 @@ async def create_event(session: SessionDep, event: EventCreate):
     return new_event
 
 
-# DELETE - Events
-@router.delete("/", status_code=204)
+# DELETE - events
+@router.delete("/", status_code=200)
 async def delete_all_events(session: SessionDep):
     '''
     Delete all events (Irreversible!!!).
     '''
     session.exec(delete(Event)) 
     session.commit()
+    return 'All events succesfully deleted!'
 
 
 # GET /events/{id}
@@ -60,3 +61,18 @@ async def get_event_by_id(session: SessionDep, event_id: int, title="The ID of t
     if not event:
         raise HTTPException(status_code=404, detail=f"Event with id {event_id} not found")
     return event
+
+
+# DELETE /events/{id}
+@router.delete("/{event_id}", response_model=EventForm)
+async def delete_event_by_id(session : SessionDep, event_id: int, title="Event ID", ge=1):
+    '''
+    Deletes an existing event by ID.
+    '''
+    event = session.get(Event, event_id)
+    if not event:
+        raise HTTPException(status_code=404, detail=f"Event with id {event_id} not found")
+    
+    session.delete(event)
+    session.commit()
+    return

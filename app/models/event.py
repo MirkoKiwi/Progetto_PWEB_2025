@@ -11,7 +11,7 @@ class Event(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
 
 
-class EventCreate(SQLModel):
+class EventForm(SQLModel):
     title: str
     description: str
     date: datetime

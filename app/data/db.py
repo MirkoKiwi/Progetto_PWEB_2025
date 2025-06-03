@@ -8,7 +8,7 @@ from app.config import config
 # TODO: remember to import all the DB models here
 
 from app.models.registration import Registration  # NOQA
-from app.models.event import Event, EventCreate
+from app.models.event import Event, EventForm
 from app.models.user import User
 
 
@@ -30,7 +30,7 @@ def init_database() -> None:
 
 def get_session():
     with Session(engine) as session:
-        yield session
+        yield session   
 
 
 SessionDep = Annotated[Session, Depends(get_session)]
