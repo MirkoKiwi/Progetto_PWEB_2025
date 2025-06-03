@@ -64,8 +64,8 @@ async def get_event_by_id(session: SessionDep, event_id: int, title="The ID of t
 
 
 # DELETE /events/{id}
-@router.delete("/{event_id}", response_model=EventForm)
-async def delete_event_by_id(session : SessionDep, event_id: int, title="Event ID", ge=1):
+@router.delete("/{event_id}")
+async def delete_event_by_id(session : SessionDep, event_id: int):
     '''
     Deletes an existing event by ID.
     '''
@@ -75,4 +75,4 @@ async def delete_event_by_id(session : SessionDep, event_id: int, title="Event I
     
     session.delete(event)
     session.commit()
-    return
+    return f'Event {event_id} succesfully deleted!'
