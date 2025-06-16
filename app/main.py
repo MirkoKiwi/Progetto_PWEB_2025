@@ -35,9 +35,9 @@ app.mount(
 )
 app.include_router(frontend.router)
 app.include_router(events.router)
-
 app.include_router(registrations.router)
 app.include_router(users.router)
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", reload=True)
