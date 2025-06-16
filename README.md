@@ -3,15 +3,6 @@
 ## *API da implementare*
 
 
-**Mirko Cenedese [70/94/00138]**
-
-- [x]  **[/events] GET /events** Returns the list of existing events
-- [x]  **[/events] POST /events** Creates a new event.
-- [x]  **[/events] DELETE /events** Delete all events.
-- [x]  **[/events] GET /events/{id}** Returns the event with the given id.
-- [x]  **[/events] PUT /events/{id}** Updates an existing event. 
-
----
 
 **Maria Sara Murino [70/94/00058]**
 
@@ -29,5 +20,15 @@
 - [x]  **[/users] GET /users** Returns the list of existing users.
 - [x]  **[/users] POST /users** Creates a new user.
 - [x]  **[/users] DELETE /users** Returns the user with the given username.
+
+---
+
+**Mirko Cenedese [70/94/00138]**
+
+- [x]  **[/events] GET /events** Returns the list of existing events
+- [x]  **[/events] POST /events** Creates a new event.
+- [x]  **[/events] DELETE /events** Delete all events.
+- [x]  **[/events] GET /events/{id}** Returns the event with the given id.
+- [x]  **[/events] PUT /events/{id}** Updates an existing event. 
 
 ---
