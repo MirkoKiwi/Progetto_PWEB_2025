@@ -36,9 +36,6 @@ def init_database() -> None:
             # Commit users table to database
             session.add_all(users)
             session.commit()
-            # Refresh user session
-            #for user in users:
-             #   session.refresh(user)
 
 
             # Fake events table
@@ -53,27 +50,7 @@ def init_database() -> None:
             # Commit events table to database
             session.add_all(events)
             session.commit()
-            # Refresh event session
-            #for event in events:
-             #   session.refresh(event)
 
-
-            # TODO: Fix this function
-'''
-            # Fake Registrations table
-            registrations = [
-                Registration(user_id=f.random_element(users).username, 
-                             event_id=f.random_element(events).id
-                            )
-                for _ in range(15)
-            ]
-            # Commit registrations table to database
-            session.add_all(registrations)
-            session.commit()
-            # Refresh registration session
-            for registration in registrations:
-                session.refresh(registration)
-'''
 
 
 

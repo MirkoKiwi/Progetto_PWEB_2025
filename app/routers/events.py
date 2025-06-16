@@ -22,7 +22,16 @@ templates = Jinja2Templates(directory=config.root_dir / "templates")
 @router.get("/", response_model=List[Event])
 async def get_events(session: SessionDep) -> List[Event]:
     '''
-    Returns the list of existing events.
+    \nReturns the list of existing events.
+
+    Args:
+        session: DB session
+
+    Return Value:
+        list of all existing events fetched from the DB
+
+    Raises:
+        HTTPException: If no events are found / Any other kind of errors
     '''
     try:
         # Build SELECT query for all Event rows ("SELECT * FROM event")
@@ -46,7 +55,17 @@ async def create_event(session: SessionDep,
                        event: EventForm
                       ) -> str:
     '''
-    Creates a new event.
+    \nCreates a new event.
+
+    Args:
+        session: Database session
+        event: EventForm object with user inserted values 
+    
+    Return value:
+        success message
+    
+    Raises.
+        HTTPException if the event couldn't be created
     '''
     try:
         # Build new event instance
@@ -70,7 +89,16 @@ async def create_event(session: SessionDep,
 @router.delete("/", status_code=200)
 async def delete_all_events(session: SessionDep) -> str:
     '''
-    Delete all events (Irreversible!!!).
+    \nDelete all events (Irreversible!!!).
+
+    Args:
+        session: Database session
+
+    Return value:
+        success message
+
+    Raises:
+        HTTPException if the events couldn't be deleted 
     '''
     try:
         # Build DELETE query ("DELETE FROM event")
@@ -96,7 +124,19 @@ async def get_event_by_id(session: SessionDep,
                           title="Event ID"
                         ) -> Event:
     '''
-    Returns the event with the given id.
+    \nReturns the event with the given id.
+    
+    
+    Args:
+        session: Database session 
+        event_id: ID of the event to be displayed 
+        
+    Return value:
+        the event fetched by ID
+
+    Raises:
+        HTTPException if the event couldn't be retrieved
+
     '''
     try:
         # Build query and select event with corresponding ID
@@ -125,7 +165,18 @@ async def update_event_by_id(session: SessionDep,
                              title="Event ID"
                             ) -> str:
     '''
-    Updates an existing event
+    \nUpdates an existing event
+
+    Args:
+        session: Database session 
+        event_id: ID of the event to be updated 
+        
+    Return value:
+        success message
+
+    Raises:
+        HTTPException if the event couldn't be updated
+
     '''
     # Build query and select event with corresponding ID
     # "SELECT * FROM event WHERE id = event_id"
@@ -165,7 +216,17 @@ async def delete_event_by_id(session : SessionDep,
                              event_id: Annotated[int, Path(description="ID of the event to kill")]
                             ) -> str:
     '''
-    Deletes an existing event by ID.
+    \nDeletes an existing event by ID.
+    
+    Args:
+        session: Database session 
+        event_id: ID of the event to be deleted
+        
+    Return value:
+        success message
+
+    Raises:
+        HTTPException if the event couldn't be deleted
     '''
     # Build query and select event with corresponding ID
     # "SELECT * FROM event WHERE id = event_id"
