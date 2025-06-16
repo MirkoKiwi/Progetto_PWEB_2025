@@ -22,7 +22,7 @@ async def get_registrations(session: SessionDep):
     return registrations
 
 """DELETE - /registrations/?username={username}&event_id={event_id}"""
-@router.delete("/",status_code=204)
+@router.delete("/",response_model=str)
 async def delete_registrations(username: str, event_id: int, session: SessionDep):
     """
     DELETE /registrations/?username={username}&event_id={event_id}
@@ -39,4 +39,4 @@ async def delete_registrations(username: str, event_id: int, session: SessionDep
     """elimina la registrazione"""
     session.delete(registration)
     session.commit()
-    return Response(status_code=204)
+    return Response("the registration is succesfully deleted")

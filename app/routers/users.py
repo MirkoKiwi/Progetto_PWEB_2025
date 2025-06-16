@@ -86,7 +86,7 @@ async def created_user(session: SessionDep, username: str):
     return user
 
 """DELETE - /users/{username}"""
-@router.delete("/{username}", status_code=200)
+@router.delete("/{username}", response_model=str)
 async def delete_user(username: str, session: SessionDep):
     """
     DELETE /users/{username}
@@ -100,5 +100,5 @@ async def delete_user(username: str, session: SessionDep):
 
     session.delete(user)
     session.commit()
-    return Response(status_code=204)
+    return  Response("the user is succesfully deleted")
 
