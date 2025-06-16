@@ -62,7 +62,7 @@ def init_database() -> None:
 '''
             # Fake Registrations table
             registrations = [
-                Registration(user_id=f.random_element(users).id, 
+                Registration(user_id=f.random_element(users).username, 
                              event_id=f.random_element(events).id
                             )
                 for _ in range(15)
