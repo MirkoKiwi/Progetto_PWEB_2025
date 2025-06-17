@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Request, Path, Query, Form
+from fastapi import APIRouter, HTTPException, Request, Path, Query, Form, Response
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from app.config import config
@@ -86,7 +86,7 @@ async def create_event(session: SessionDep,
 
 
 # DELETE - events
-@router.delete("/", status_code=200)
+@router.delete("/", response_model=str)
 async def delete_all_events(session: SessionDep) -> str:
     '''
     \nDelete all events (Irreversible!!!).
@@ -108,7 +108,7 @@ async def delete_all_events(session: SessionDep) -> str:
         session.exec(statement) 
         session.commit()
 
-        return 'All events succesfully deleted!'
+        return Response("All events succesfully deleted!")
 
     # If exception occurs, rollback any pending transaction and raise HTTP 500 Internal Server Error
     except Exception as e:
@@ -291,7 +291,7 @@ async def register_event(
     """3) Verifica che non sia già registrato"""
     key = (user.username, event_id)
     if session.get(Registration, key):
-        raise HTTPException(status_code=400, detail="Already registered")
+        raise HTTPException(status_code=404, detail="Already registered")
 
     """4) Crea la registrazione"""
     db_reg = Registration(username=user.username, event_id=event_id)

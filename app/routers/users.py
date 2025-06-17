@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Response
 from typing import List
 from sqlmodel import select, Session, delete
 from app.models.user import User
+from app.models.registration import Registration
 from app.data.db import SessionDep
 
 """prefix="/users" indica che tutte le rotte partiranno con /users
@@ -45,7 +46,7 @@ async def create_user(user: User, session: SessionDep) -> User:
 
     """Controllo di unicità dello username"""
     if session.get(User, user.username):
-        raise HTTPException(status_code=400, detail="Username already exists")
+        raise HTTPException(status_code=404, detail="Username already exists")
     """Aggiunge il nuovo utente alla sessione"""
     session.add(user)
     """Salva le modifiche sul database"""
@@ -56,7 +57,7 @@ async def create_user(user: User, session: SessionDep) -> User:
     return user
 
 """DELETE /users"""
-@router.delete("/", status_code=204)
+@router.delete("/", response_model=str)
 async def delete_all_users(session: SessionDep) -> None:
     """
     DELETE /users
@@ -69,6 +70,7 @@ async def delete_all_users(session: SessionDep) -> None:
     session.exec(delete(User))
     """Esegue DELETE FROM user"""
     session.commit()
+    return Response("the user are successfully deleted")
 
 
 """GET /users/{username} - Restituisce un singolo utente"""
@@ -97,7 +99,13 @@ async def delete_user(username: str, session: SessionDep):
     user = session.get(User, username)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
+    
+    """Cancella prima le registrazioni legate all'utente"""
+    registrations = session.exec(select(Registration).where(Registration.username == username)).all()
+    for reg in registrations:
+        session.delete(reg)
 
+    """elimina l'utente"""
     session.delete(user)
     session.commit()
     return  Response("the user is succesfully deleted")
