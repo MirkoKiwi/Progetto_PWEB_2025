@@ -3,7 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Response
 from typing import List
 from sqlmodel import select, Session, delete
-from app.models.user import User
+from app.models.user import User, UserCreate
 from app.models.registration import Registration
 from app.data.db import SessionDep
 
@@ -11,6 +11,8 @@ from app.data.db import SessionDep
 tags=["users"] serve per raggruppare le rotte nella documentazione Swagger"""
 
 router = APIRouter(prefix="/users", tags=["users"])
+
+
 
 """GET /users"""
 @router.get("/", response_model=List[User])
@@ -29,9 +31,10 @@ async def list_users(session: SessionDep) -> List[User]:
     return list(users)
 
 
+
 """POST /users Crea un nuovo utente"""
 @router.post("/", response_model=User, status_code=201)
-async def create_user(user: User, session: SessionDep) -> User:
+async def create_user(new_user: UserCreate, session: SessionDep) -> User:
     """
         - Il body della richiesta deve avere i campi di User:
           {
@@ -45,16 +48,23 @@ async def create_user(user: User, session: SessionDep) -> User:
         """
 
     """Controllo di unicità dello username"""
-    if session.get(User, user.username):
-        raise HTTPException(status_code=404, detail="Username already exists")
+    existing_user = session.exec(select(User).where(User.username == new_user.username)).first()
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Username already exists")
+
+    '''Crea nuovo oggetto User'''
+    user = User(**new_user.dict())
     """Aggiunge il nuovo utente alla sessione"""
     session.add(user)
     """Salva le modifiche sul database"""
     session.commit()
     """Ricarica l'istanza per ottenere eventuali valori generati (non applicabile per User)"""
     session.refresh(user)
+
     """Restituisce l'utente creato"""
     return user
+
+
 
 """DELETE /users"""
 @router.delete("/", response_model=str)
@@ -73,6 +83,7 @@ async def delete_all_users(session: SessionDep) -> None:
     return Response("the user are successfully deleted")
 
 
+
 """GET /users/{username} - Restituisce un singolo utente"""
 @router.get("/{username}", response_model=User)
 async def created_user(session: SessionDep, username: str):
@@ -86,6 +97,8 @@ async def created_user(session: SessionDep, username: str):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
+
+
 
 """DELETE - /users/{username}"""
 @router.delete("/{username}", response_model=str)
