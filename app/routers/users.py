@@ -76,11 +76,13 @@ async def delete_all_users(session: SessionDep) -> None:
     - Commita la transazione.
     - Restituisce 204 No Content.
     """
+    """Elimina prima tutte le registrazioni"""
+    session.exec(delete(Registration))
     """Esegue DELETE FROM user"""
     session.exec(delete(User))
     """Esegue DELETE FROM user"""
     session.commit()
-    return Response("the user are successfully deleted")
+    return "All users and related registrations successfully deleted"
 
 
 
@@ -121,5 +123,5 @@ async def delete_user(username: str, session: SessionDep):
     """elimina l'utente"""
     session.delete(user)
     session.commit()
-    return  Response("the user is succesfully deleted")
+    return  f"User '{username}' successfully deleted"
 

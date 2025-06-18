@@ -39,4 +39,4 @@ async def delete_registrations(username: str, event_id: int, session: SessionDep
     """elimina la registrazione"""
     session.delete(registration)
     session.commit()
-    return Response("the registration is succesfully deleted")
+    return "the registration is successfully deleted"

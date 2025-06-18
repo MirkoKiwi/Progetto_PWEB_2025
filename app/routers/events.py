@@ -50,7 +50,7 @@ async def get_events(session: SessionDep) -> List[Event]:
 
 
 # POST - events
-@router.post("/", response_model=str)
+@router.post("/", response_model=str, status_code=201)
 async def create_event(session: SessionDep, 
                        event: EventForm
                       ) -> str:
@@ -104,11 +104,14 @@ async def delete_all_events(session: SessionDep) -> str:
         # Build DELETE query ("DELETE FROM event")
         statement = delete(Event)
 
+        #Prima elimina tutte le registrazioni
+        session.exec(delete(Registration))
+        
         # Execute query and commit to DB
         session.exec(statement) 
         session.commit()
 
-        return Response("All events succesfully deleted!")
+        return "All events and related registrations are succesfully deleted!"
 
     # If exception occurs, rollback any pending transaction and raise HTTP 500 Internal Server Error
     except Exception as e:
@@ -237,6 +240,9 @@ async def delete_event_by_id(session : SessionDep,
         raise HTTPException(status_code=404, detail=f"Event with id {event_id} not found")
     
     try:
+        # Elimina registrazioni prima
+        session.exec(delete(Registration).where(Registration.event_id == event_id))
+
         # Delete the event from the session and commit transaction to DB
         session.delete(event)
         session.commit()
@@ -291,7 +297,7 @@ async def register_event(
     """3) Verifica che non sia già registrato"""
     key = (user.username, event_id)
     if session.get(Registration, key):
-        raise HTTPException(status_code=404, detail="Already registered")
+        raise HTTPException(status_code=409, detail="Already registered")
 
     """4) Crea la registrazione"""
     db_reg = Registration(username=user.username, event_id=event_id)
